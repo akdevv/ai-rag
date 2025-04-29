@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import Footer from "@/components/footer";
 import { FileProvider } from "@/context/file-context";
 
 export const metadata: Metadata = {
@@ -14,8 +15,13 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en">
-			<body className={`antialiased bg-background text-foreground`}>
-				<FileProvider>{children}</FileProvider>
+			<body
+				className={`antialiased bg-background text-foreground font-bricolage p-3 md:p-5 flex flex-col min-h-screen`}
+			>
+				<FileProvider>
+					<main className="flex-1">{children}</main>
+					<Footer />
+				</FileProvider>
 			</body>
 		</html>
 	);

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Bungee+Spice&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@200..800&display=swap');
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -43,13 +45,16 @@
   --radius-xl: calc(var(--radius) + 4px);
 /* Custom Colors */
   --color-background: #0D0D0D;
-  --color-barkground-100: #1A1A1A;
-  --color-barkground-200: #262626;
+  --color-background-100: #1A1A1A;
+  --color-background-200: #262626;
 
   --color-foreground: #E0E0E0;
   --color-foreground-hover: #A0A0A0;
   --color-accent: #4F46E5;
   --color-accent-hover: #6366F1;
+/* Custom Fonts */
+  --font-bungee: "Bungee Spice", sans-serif;
+  --font-bricolage: 'Bricolage Grotesque', sans-serif;
 }
 
 :root {

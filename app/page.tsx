@@ -1,36 +1,20 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
 import FileUpload from "@/components/file-upload";
-import { MdArrowRightAlt } from "react-icons/md";
-import { useFile } from "@/context/file-context";
-import { useRouter } from "next/navigation";
 
 export default function Home() {
-	const { file } = useFile();
-	const router = useRouter();
-
-	const handleFileAnalyze = () => {
-		if (file) {
-			router.push("/analyze");
-		}
-	};
-
 	return (
-		<div className="flex flex-col items-center h-screen p-5">
-			<h1 className="text-4xl font-bold">Welcome to the AI RAG</h1>
+		<div className="flex flex-col">
+			<header>
+				<h1 className="text-3xl sm:text-5xl md:text-6xl font-bungee text-center">
+					Welcome to the AI RAG
+				</h1>
+				<p className="text-center text-foreground-hover mt-2 max-w-2xl mx-auto text-xs sm:text-base">
+					Upload your document and use advanced RAG to chat with your
+					data
+				</p>
+			</header>
 
-			<div className="flex flex-col items-center justify-center h-full">
+			<div className="mt-24">
 				<FileUpload />
-				<div className="mt-4 w-full">
-					<Button
-						disabled={!file}
-						className="bg-accent text-foreground hover:bg-accent/90 transition-all duration-300 w-full cursor-pointer"
-						onClick={handleFileAnalyze}
-					>
-						Analyze <MdArrowRightAlt />
-					</Button>
-				</div>
 			</div>
 		</div>
 	);

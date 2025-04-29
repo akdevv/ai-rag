@@ -34,3 +34,20 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+
+shimmer effect:
+
+{text && (
+					<div className="text-sm relative overflow-hidden">
+						<span
+							className="bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer bg-clip-text text-white/30"
+							style={{
+								backgroundSize: "200% 100%",
+								animation: "shimmer 3s infinite linear",
+							}}
+						>
+							{text}
+						</span>
+					</div>
+				)}

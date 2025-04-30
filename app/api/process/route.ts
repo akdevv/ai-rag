@@ -3,6 +3,8 @@ import parseFile from "@/lib/process/parseFile";
 import chunkText from "@/lib/process/chunkText";
 import embedChunks from "@/lib/process/embedChunks";
 import { NextRequest, NextResponse } from "next/server";
+import { setVectorStore } from "@/services/vectorStore";
+import storeEmbeddings from "@/lib/process/storeEmbeddings";
 
 export async function POST(request: NextRequest) {
 	try {
@@ -36,6 +38,13 @@ export async function POST(request: NextRequest) {
 		const embeddedChunks = await embedChunks(chunkedText);
 		console.log(chalk.green("✅ Chunks embedded successfully:"));
 		console.log("Embedded chunks:", embeddedChunks);
+
+		// STEP 4: Store the embeddings
+		console.log(chalk.blue("🔍 Starting vector store storage..."));
+		const vectorStore = await storeEmbeddings(embeddedChunks, chunkedText);
+		console.log(chalk.green("✅ Vector store stored successfully:"));
+		console.log("Vector store:", vectorStore);
+		setVectorStore(vectorStore);
 
 		return NextResponse.json({
 			success: true,

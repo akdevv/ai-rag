@@ -7,8 +7,8 @@ import { useFile } from "@/context/file-context";
 import Loader from "@/components/shared/loader";
 import { BiSolidSend } from "react-icons/bi";
 import { Button } from "@/components/ui/button";
-import { FaRobot, FaUser, FaFile } from "react-icons/fa";
 import CustomError from "@/components/shared/custom-error";
+import { FaRobot, FaUser, FaFile, FaArrowLeft } from "react-icons/fa";
 
 type Message = {
 	id: string;
@@ -62,7 +62,7 @@ export default function Chat() {
 		processFile();
 	}, [file]);
 
-	const handleSendMessage = () => {
+	const handleSendMessage = async () => {
 		if (!inputMessage.trim()) return;
 
 		const newMessage: Message = {
@@ -74,15 +74,18 @@ export default function Chat() {
 		setMessages([...messages, newMessage]);
 		setInputMessage("");
 
-		// Simulate AI response (in a real app, you would call your AI API here)
-		setTimeout(() => {
-			const aiResponse: Message = {
-				id: (Date.now() + 1).toString(),
-				text: "I'm analyzing your document based on your query. Here's what I found...",
+		const res = await axios.post("/api/chat", {
+			userMessage: inputMessage,
+		});
+
+		setMessages([
+			...messages,
+			{
+				id: Date.now().toString(),
+				text: res.data.aiResponse,
 				sender: "ai",
-			};
-			setMessages((prev) => [...prev, aiResponse]);
-		}, 1000);
+			},
+		]);
 	};
 
 	if (isLoading) {
@@ -95,6 +98,14 @@ export default function Chat() {
 
 	return (
 		<div className="flex justify-center">
+			<Button
+				size="icon"
+				onClick={() => router.back()}
+				className="absolute top-3 left-3 bg-neutral-800 border border-neutral-700 hover:bg-neutral-600 cursor-pointer rounded-full p-4"
+			>
+				<FaArrowLeft className="text-white" />
+			</Button>
+
 			<div className="max-w-4xl w-full flex flex-col h-[calc(100vh-5rem)]">
 				<div className="flex-1 overflow-y-auto mb-4 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none']">
 					<div className="flex items-center w-fit gap-2 mb-4 p-2 rounded-lg bg-neutral-800 border border-neutral-700">
@@ -132,7 +143,7 @@ export default function Chat() {
 											<FaUser className="text-white" />
 										)}
 									</div>
-									<div className="p-3 rounded-xl bg-neutral-800 border border-neutral-700">
+									<div className="p-3 max-w-[80%] rounded-xl bg-neutral-800 border border-neutral-700">
 										{message.text}
 									</div>
 								</div>

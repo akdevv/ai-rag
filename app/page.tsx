@@ -1,6 +1,15 @@
+"use client";
+
+import { useEffect } from "react";
 import FileUpload from "@/components/file-upload";
 
 export default function Home() {
+	useEffect(() => {
+		if (localStorage.getItem("chatMessages")) {
+			localStorage.removeItem("chatMessages");
+		}
+	}, []);
+
 	return (
 		<div className="flex flex-col">
 			<header>

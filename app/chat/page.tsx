@@ -14,6 +14,7 @@ type Message = {
 	id: string;
 	text: string;
 	sender: "ai" | "user";
+	isLoading?: boolean;
 };
 
 export default function Chat() {
@@ -21,19 +22,41 @@ export default function Chat() {
 	const router = useRouter();
 	const [isLoading, setIsLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
-	const [messages, setMessages] = useState<Message[]>([
-		{
-			id: "1",
-			text: "Hello! I've processed your document. What would you like to know about it?",
-			sender: "ai",
-		},
-	]);
+	const [messages, setMessages] = useState<Message[]>([]);
 	const [inputMessage, setInputMessage] = useState("");
+	const [isAiResponding, setIsAiResponding] = useState(false);
 
 	if (!file) {
 		router.push("/");
 		return null;
 	}
+
+	useEffect(() => {
+		// Load messages from localStorage
+		const savedMessages = localStorage.getItem("chatMessages");
+		if (savedMessages) {
+			setMessages(JSON.parse(savedMessages));
+		} else {
+			// Set initial message if no saved messages
+			const initialMessage: Message = {
+				id: "1",
+				text: "Hello! I've processed your document. What would you like to know about it?",
+				sender: "ai",
+			};
+			setMessages([initialMessage]);
+			localStorage.setItem(
+				"chatMessages",
+				JSON.stringify([initialMessage])
+			);
+		}
+	}, []);
+
+	// Save messages to localStorage whenever they change
+	useEffect(() => {
+		if (messages.length > 0) {
+			localStorage.setItem("chatMessages", JSON.stringify(messages));
+		}
+	}, [messages]);
 
 	useEffect(() => {
 		const processFile = async () => {
@@ -63,29 +86,58 @@ export default function Chat() {
 	}, [file]);
 
 	const handleSendMessage = async () => {
-		if (!inputMessage.trim()) return;
+		if (!inputMessage.trim() || isAiResponding) return;
 
-		const newMessage: Message = {
+		const userMessage: Message = {
 			id: Date.now().toString(),
 			text: inputMessage,
 			sender: "user",
 		};
 
-		setMessages([...messages, newMessage]);
+		const updatedMessages = [...messages, userMessage];
+		setMessages(updatedMessages);
 		setInputMessage("");
+		setIsAiResponding(true);
 
-		const res = await axios.post("/api/chat", {
-			userMessage: inputMessage,
-		});
+		// Add loading message
+		const loadingMessage: Message = {
+			id: `loading-${Date.now()}`,
+			text: "...",
+			sender: "ai",
+			isLoading: true,
+		};
 
-		setMessages([
-			...messages,
-			{
+		setMessages([...updatedMessages, loadingMessage]);
+
+		try {
+			const res = await axios.post("/api/chat", {
+				userMessage: inputMessage,
+			});
+
+			// Replace loading message with actual response
+			const aiMessage: Message = {
 				id: Date.now().toString(),
 				text: res.data.aiResponse,
 				sender: "ai",
-			},
-		]);
+			};
+
+			const finalMessages = updatedMessages.concat(aiMessage);
+			setMessages(finalMessages);
+		} catch (error) {
+			console.error("Error sending message:", error);
+
+			// Replace loading message with error
+			const errorMessage: Message = {
+				id: Date.now().toString(),
+				text: "Sorry, I encountered an error processing your request.",
+				sender: "ai",
+			};
+
+			const finalMessages = updatedMessages.concat(errorMessage);
+			setMessages(finalMessages);
+		} finally {
+			setIsAiResponding(false);
+		}
 	};
 
 	if (isLoading) {
@@ -144,7 +196,21 @@ export default function Chat() {
 										)}
 									</div>
 									<div className="p-3 max-w-[80%] rounded-xl bg-neutral-800 border border-neutral-700">
-										{message.text}
+										{message.isLoading ? (
+											<div className="flex gap-1 font-extrabold">
+												<span className="animate-pulse">
+													.
+												</span>
+												<span className="animate-pulse animation-delay-200">
+													.
+												</span>
+												<span className="animate-pulse animation-delay-400">
+													.
+												</span>
+											</div>
+										) : (
+											message.text
+										)}
 									</div>
 								</div>
 							</div>
@@ -163,10 +229,12 @@ export default function Chat() {
 							}
 							placeholder="Ask something about your document..."
 							className="flex-1 outline-none pl-2 text-neutral-100"
+							disabled={isAiResponding}
 						/>
 						<Button
 							onClick={handleSendMessage}
 							className="bg-accent text-white p-2 rounded-full hover:bg-accent/80 transition-colors duration-300 cursor-pointer"
+							disabled={isAiResponding}
 						>
 							<BiSolidSend />
 						</Button>

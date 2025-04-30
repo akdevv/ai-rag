@@ -87,8 +87,8 @@ export default function FileUpload() {
 						<div className="">
 							{!file ? (
 								<>
-									<div className="w-16 h-16 bg-neutral-800 rounded-full mx-auto mb-4 flex items-center justify-center">
-										<FiUploadCloud className="w-8 h-8 text-neutral-500" />
+									<div className="w-16 h-16 bg-neutral-700 rounded-full mx-auto mb-4 flex items-center justify-center">
+										<FiUploadCloud className="w-8 h-8 text-neutral-400" />
 									</div>
 									<p className="text-lg">
 										Drag and drop your

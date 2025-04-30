@@ -1,6 +1,8 @@
-import { NextRequest, NextResponse } from "next/server";
-import parseFile from "@/lib/parseFile";
 import chalk from "chalk";
+import parseFile from "@/lib/process/parseFile";
+import chunkText from "@/lib/process/chunkText";
+import embedChunks from "@/lib/process/embedChunks";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
 	try {
@@ -17,45 +19,27 @@ export async function POST(request: NextRequest) {
 			);
 		}
 
-		// Log file information
-		console.log(chalk.green("📄 File received:"));
-		console.log(chalk.yellow(`   - Name: ${file.name}`));
-		console.log(chalk.yellow(`   - Type: ${file.type}`));
-		console.log(
-			chalk.yellow(`   - Size: ${(file.size / 1024).toFixed(2)} KB`)
-		);
-		console.log(
-			chalk.yellow(
-				`   - Last Modified: ${new Date(
-					file.lastModified
-				).toLocaleString()}`
-			)
-		);
-
+		// STEP 1: Parse the file
 		console.log(chalk.blue("🔍 Starting file parsing..."));
-		const documents = await parseFile(file);
-
+		const parsedFile = await parseFile(file);
 		console.log(chalk.green("✅ File parsed successfully:"));
-		console.log(
-			chalk.yellow(`   - Number of documents: ${documents.length}`)
-		);
-		console.log(
-			chalk.yellow(
-				`   - First document preview: ${documents[0].pageContent.substring(
-					0,
-					100
-				)}...`
-			)
-		);
+		console.log("Parsed text:", parsedFile);
 
-		// TODO: Store the parsed documents in your vector store or database
-		console.log(chalk.blue("💾 Documents ready for storage"));
+		// STEP 2: Chunk the parsed file
+		console.log(chalk.blue("🔍 Starting file chunking..."));
+		const chunkedText = await chunkText(parsedFile[0].pageContent);
+		console.log(chalk.green("✅ File chunked successfully:"));
+		console.log("Chunked text:", chunkedText);
+
+		// STEP 3: Embed the chunks
+		console.log(chalk.blue("🔍 Starting chunk embedding..."));
+		const embeddedChunks = await embedChunks(chunkedText);
+		console.log(chalk.green("✅ Chunks embedded successfully:"));
+		console.log("Embedded chunks:", embeddedChunks);
 
 		return NextResponse.json({
 			success: true,
 			message: "File processed successfully",
-			fileName: file.name,
-			documentCount: documents.length,
 		});
 	} catch (error) {
 		console.error(chalk.red("❌ Error processing file:"), error);

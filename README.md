@@ -1,53 +1,98 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI RAG (Retrieval-Augmented Generation) Application
 
-## Getting Started
+This is a Next.js-based application that implements a Retrieval-Augmented Generation (RAG) system, allowing users to upload documents and interact with them through a chat interface. The application uses Ollama for embeddings and Groq AI for generating responses.
 
-First, run the development server:
+## Features
+
+- Document Upload: Support for PDF, DOCX, and TXT files
+- Real-time Chat Interface: Interactive chat with your documents
+- Memory Storage: Efficient storage and retrieval of document embeddings
+- Streaming Responses: Real-time AI responses
+- Modern UI: Responsive design with loading states and error handling
+
+## Prerequisites
+
+Before running this project, you need to have the following installed:
+
+- Node.js (v18 or higher)
+- pnpm (Package Manager)
+- Ollama (for local embeddings)
+
+## Local Setup
+
+### 1. Install Ollama and Required Models
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Install Ollama
+curl -fsSL https://ollama.com/install.sh | sh
+
+# Install required models
+ollama pull mistral
+ollama pull nomic-embed-text
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Clone and Install Dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+# Clone the repository
+git clone <repository-url>
+cd ai-rag
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+# Install dependencies
+pnpm install
+```
+
+### 3. Environment Setup
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```env
+GROQ_API_KEY=your_groq_api_key
+```
+
+### 4. Run the Development Server
+
+```bash
+# Start the development server
+pnpm dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
+
+## Project Structure
+
+- `/app`: Next.js application code
+- `/components`: Reusable UI components
+- `/services`: Backend services and utilities
+- `/api`: API routes for file processing and chat
+- `/context`: Global state management
+
+## Technology Stack
+
+- **Frontend**: Next.js, TypeScript, Tailwind CSS
+- **AI/ML**: Ollama (embeddings), Groq AI (response generation)
+- **Storage**: In-memory storage for embeddings
+- **Development**: pnpm, ESLint, Prettier
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
+To learn more about the technologies used in this project:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [Next.js Documentation](https://nextjs.org/docs)
+- [Ollama Documentation](https://ollama.ai/docs)
+- [Groq AI Documentation](https://groq.com/docs)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
+## Deployment
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
+## Contributing
 
-shimmer effect:
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-{text && (
-					<div className="text-sm relative overflow-hidden">
-						<span
-							className="bg-gradient-to-r from-transparent via-white/20 to-transparent animate-shimmer bg-clip-text text-white/30"
-							style={{
-								backgroundSize: "200% 100%",
-								animation: "shimmer 3s infinite linear",
-							}}
-						>
-							{text}
-						</span>
-					</div>
-				)}
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
